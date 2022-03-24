@@ -20,15 +20,24 @@ const isValid = function (value) {
 const createcollege = async function (req, res) {
     try {
         let data = req.body
-//const { name, fullName, logoLink } = data
-//const { fullName } = data////
-// const req0 = isValid(name)
-// if (!req0) return res.status(400).send('name is require')
-//const req1 = isValid(fullName)
-//const upper = req1.charAt(0).toUpperCase() + req1.substring(1);//////
-//if (!req1) return res.status(400).send('fullName require')
-// const req2 = isValid(logoLink)
-// if (!req2) return res.status(400).send('logoLink require')
+const { name, fullName, logoLink } = data
+
+if(Object.keys(data)==0){
+    return res.status(400).send({ status: false, msg: " data is  missing" })
+  }
+
+const req0 = isValid(name)
+if (!req0) return res.status(400).send('name is require')
+const req1 = isValid(fullName)
+
+if (!req1) return res.status(400).send('fullName require')
+const req2 = isValid(logoLink)
+if (!req2) return res.status(400).send('logoLink require')
+
+if (!(/https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)/.test(logoLink))) {
+    return res.status(400).send({ status: false, message: "please enter a valid logo link" })
+  }
+
 
 let collegeCreated = await CollegeModel.create(data)
 res.status(201).send({status: true,data: collegeCreated})
@@ -44,6 +53,13 @@ const getCollege = async function(req,res){
     try{
        const collegeName = req.query.collegeName
     
+       if(!isValid(collegeName)){
+        return res.status(400).send({status : false, message: "please provide collegeName"})
+    }
+
+
+
+
        if(!collegeName){return res.status(400).send({status:false, msg:"BAD REQUEST please provied valid collegeName"})}
        const college =await CollegeModel.find({ name:collegeName, isDeleted: false })
        if (!college) {

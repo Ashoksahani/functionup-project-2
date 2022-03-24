@@ -23,6 +23,9 @@ const createintern = async function (req, res) {
         
 
         const { name,mobile,email,} = intern
+        if(Object.keys(intern)==0){
+            return res.status(400).send({ status: false, msg: " data is  missing" })
+          }
 
         const req0 = isValid(name)
         if (!req0) return res.status(400).send('name is require')
